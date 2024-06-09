@@ -7,24 +7,6 @@
 - Route `/something/:param`: page content and purpose, param specification
 - ...
 
-## API Server
-
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
-
-## Database Tables
-
-- Table `users` - contains xx yy zz
-- Table `something` - contains ww qq ss
-- ...
 
 ## Main React Components
 
@@ -34,9 +16,36 @@
 
 (only _main_ components, minor ones may be skipped)
 
-## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+## API Server
+
+- POST `/api/something`: purpose
+  - request parameters and request body content
+  - response body content
+  - response status codes and possible errors
+- GET `/api/something`: purpose
+  - request parameters
+  - response body content
+  - response status codes and possible errors
+- PUT `/api/something`: purpose
+  - request parameters and request body content
+  - response body content
+  - response status codes and possible errors
+- ...
+
+## Database Tables
+
+- Table `users` - short description of its contents
+- Table `something` - short description of its contents
+- ...
+
+
+## Screenshots
+
+![Screenshot1](./img/screenshot.jpg)
+
+![Screenshot2](./img/screenshot.jpg)
+
 
 ## Users Credentials
 
