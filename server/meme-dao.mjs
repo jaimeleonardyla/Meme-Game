@@ -17,69 +17,75 @@ export const getImage = () =>{
 
 
 const shuffle = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+export const getMeme = (usedImageIds = []) => {
+  return new Promise((resolve, reject) => {
+    let sqlImage = 'SELECT * FROM image ';
+    if (usedImageIds.length > 0) {
+      const placeholders = usedImageIds.map(() => '?').join(',');
+      sqlImage += `WHERE id NOT IN (${placeholders}) `;
     }
-    return array;
-  };
-  
-  export const getMeme = () => {
-    return new Promise((resolve, reject) => {
-      const sqlImage = 'SELECT * FROM image ORDER BY RANDOM() LIMIT 1';
-      db.get(sqlImage, [], (err, imageRow) => {
-        if (err) {
-          reject(err);
-        } else if (!imageRow) {
-          resolve({ error: 'No image found' });
-        } else {
-          const image = new Image(imageRow.id, imageRow.image_url);
-          const sqlCaptions = `
-            SELECT caption.* 
-            FROM caption 
-            JOIN meme ON caption.id = meme.caption_id 
-            WHERE meme.image_id = ? 
-            ORDER BY RANDOM()`;
-  
-          db.all(sqlCaptions, [image.id], (err, captionRows) => {
-            if (err) {
-              reject(err);
+    sqlImage += 'ORDER BY RANDOM() LIMIT 1';
+
+    db.get(sqlImage, usedImageIds, (err, imageRow) => {
+      if (err) {
+        reject(err);
+      } else if (!imageRow) {
+        resolve({ error: 'No image found' });
+      } else {
+        const image = new Image(imageRow.id, imageRow.image_url);
+        const sqlCaptions = `
+          SELECT caption.* 
+          FROM caption 
+          JOIN meme ON caption.id = meme.caption_id 
+          WHERE meme.image_id = ? 
+          ORDER BY RANDOM()`;
+
+        db.all(sqlCaptions, [image.id], (err, captionRows) => {
+          if (err) {
+            reject(err);
+          } else {
+            let captions = captionRows.map(row => new Caption(row.id, row.text));
+            const captionsCount = captions.length;
+
+            if (captionsCount < 7) {
+              const sqlRandomCaptions = `
+                SELECT * FROM caption 
+                WHERE id NOT IN (
+                  SELECT caption.id 
+                  FROM caption 
+                  JOIN meme ON caption.id = meme.caption_id 
+                  WHERE meme.image_id = ?
+                ) 
+                ORDER BY RANDOM() 
+                LIMIT ?`;
+
+              db.all(sqlRandomCaptions, [image.id, 7 - captionsCount], (err, randomCaptionRows) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  const randomCaptions = randomCaptionRows.map(row => new Caption(row.id, row.text));
+                  captions = captions.concat(randomCaptions);
+                  captions = shuffle(captions);  // Shuffle the combined list
+                  resolve({ image, captions });
+                }
+              });
             } else {
-              let captions = captionRows.map(row => new Caption(row.id, row.text));
-              const captionsCount = captions.length;
-  
-              if (captionsCount < 7) {
-                const sqlRandomCaptions = `
-                  SELECT * FROM caption 
-                  WHERE id NOT IN (
-                    SELECT caption.id 
-                    FROM caption 
-                    JOIN meme ON caption.id = meme.caption_id 
-                    WHERE meme.image_id = ?
-                  ) 
-                  ORDER BY RANDOM() 
-                  LIMIT ?`;
-  
-                db.all(sqlRandomCaptions, [image.id, 7 - captionsCount], (err, randomCaptionRows) => {
-                  if (err) {
-                    reject(err);
-                  } else {
-                    const randomCaptions = randomCaptionRows.map(row => new Caption(row.id, row.text));
-                    captions = captions.concat(randomCaptions);
-                    captions = shuffle(captions);  // Mezclar la lista combinada
-                    resolve({ image, captions });
-                  }
-                });
-              } else {
-                captions = shuffle(captions);  // Mezclar la lista si ya hay 7 o más captions
-                resolve({ image, captions });
-              }
+              captions = shuffle(captions);  // Shuffle the list if there are already 7 or more captions
+              resolve({ image, captions });
             }
-          });
-        }
-      });
+          }
+        });
+      }
     });
-  };
+  });
+};
 
 export const verifyCaption = (imageId, captionId) => {
     return new Promise((resolve, reject) => {

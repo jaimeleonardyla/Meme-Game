@@ -20,12 +20,15 @@ export function Meme(props){
     useEffect(() =>{
         const getMeme = async () => {
           try{
-            const meme = await API.getMeme();
+            const meme = await API.getMeme(props.usedImageIds);
             setMeme(meme);
             setSelectedCaption(null);
             setIsCorrect(null);
             setShowResult(false);
             setTimeEnd(false);
+            if(props.loggedIn) {
+              props.handleImageUsed(meme.image.id)
+            }
           }catch(err){
             setError(err.message);
           }

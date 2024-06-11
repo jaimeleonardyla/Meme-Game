@@ -70,3 +70,12 @@ content-type: application/json
 
 GET http://localhost:3001/api/games/1/summary
 ###
+
+### Request a new meme with no used images
+POST http://localhost:3001/api/meme
+content-type: application/json
+
+{
+  "usedImageIds": [2]
+}
+###

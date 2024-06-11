@@ -108,18 +108,16 @@ app.get('/api/image', async (req, res) => {
   }
 });
 
-app.get('/api/meme', async(req, res) => {
+app.post('/api/meme', async (req, res) => {
+  const usedImageIds = req.body.usedImageIds || [];
   try {
-    const meme = await getMeme();
-    if (meme.error) {
-      res.status(404).json(meme);
-    } else {
-      res.json(meme);
-    }
-  } catch (error) {
-    res.status(500).end();
+    const meme = await getMeme(usedImageIds);
+    res.json(meme);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching meme' });
   }
 });
+
 
 app.post('/api/meme/verify',async(req, res) => {
   const { imageId, captionId } = req.body;

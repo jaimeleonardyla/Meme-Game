@@ -10,6 +10,8 @@ function Game(props){
 
     const [currentRound, setCurrentRound] = useState(1);
     const [score, setScore] = useState(0);
+
+    const [usedImageIds, setUsedImageIds] = useState([]);
     const navigate = useNavigate();
 
 
@@ -30,11 +32,21 @@ function Game(props){
         }
       };
       
+      const handleImageUsed = (imageId) => {
+        setUsedImageIds((prevIds) => [...prevIds, imageId]); // Track used image IDs
+      };
 
       return (
         <>
         Round: {currentRound} Time Left: 
-        <Meme gameId={gameId} currentRound={currentRound} setCurrentRound={setCurrentRound} handleNextRound={handleNextRound} loggedIn={true}/>
+        <Meme 
+        gameId={gameId} 
+        currentRound={currentRound} 
+        setCurrentRound={setCurrentRound}
+        handleNextRound={handleNextRound} 
+        handleImageUsed={handleImageUsed}
+        usedImageIds={usedImageIds}
+        loggedIn={true}/>
          
         </>
       );    

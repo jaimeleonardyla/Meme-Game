@@ -44,15 +44,20 @@ const getUserInfo = async () => {
     }
 };
 
-const getMeme = async () => {
-  const response = await fetch(SERVER_URL + '/api/meme');
+const getMeme = async (usedImageIds) => {
+  const response = await fetch(SERVER_URL + '/api/meme', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ usedImageIds })
+  });
   if (response.ok) {
-    const meme = await response.json();
-    return meme;
+    return await response.json();
   } else {
-    const errDetails = await response.text();
-    throw errDetails;
+    const errMessage = await response.text();
+    throw new Error(errMessage);
   }
+
 };
 
 const verifyCaption = async (imageId, captionId) => {
