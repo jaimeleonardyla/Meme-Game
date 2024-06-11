@@ -1,0 +1,72 @@
+### Test Login
+# Login
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+  "username": "luigi.derussis@polito.it",
+  "password": "testtest"
+}
+###
+
+### Checking if user is still logged-in.
+GET http://localhost:3001/api/sessions/current
+###
+
+## Execute Log Out.
+DELETE http://localhost:3001/api/sessions/current
+###
+
+GET http://localhost:3001/api/image
+###
+
+GET http://localhost:3001/api/meme
+###
+
+POST http://localhost:3001/api/meme/verify
+content-type: application/json
+
+{
+  "imageId": 2,
+  "captionId": 2
+}
+###
+
+GET   http://localhost:3001/api/image/1/captions
+###
+
+POST http://localhost:3001/api/meme/correct-captions
+content-type: application/json
+
+{
+  "imageId": 1
+}
+###
+
+POST http://localhost:3001/api/games/1/rounds
+content-type: application/json
+
+{
+  "imageId": 1,
+  "selectedCaptionId":1
+}
+###
+
+POST http://localhost:3001/api/games
+content-type: application/json
+
+{
+  "userId": 1
+}
+###
+
+PUT http://localhost:3001/api/games/2/end
+content-type: application/json
+
+{
+  "score": 15
+}
+###
+
+GET http://localhost:3001/api/games/1/summary
+###
