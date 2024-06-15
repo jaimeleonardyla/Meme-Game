@@ -3,7 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import { getUser } from './user-dao.mjs';
 import cors from 'cors';
-import { getImage, getMeme, verifyCaption, getCorrectCaptions, saveRound, startGame, endGame, getGameSummary } from './meme-dao.mjs';
+import { getImage, getMeme, verifyCaption, getCorrectCaptions, saveRound, completeGame, getGameSummary, getGameHistory } from './meme-dao.mjs';
 
 
 // passport
@@ -144,47 +144,25 @@ app.post('/api/meme/correct-captions',async(req, res) => {
 
 });
 
-app.post('/api/games/:gameId/rounds',isLoggedIn, async (req, res) => {
-  const { gameId } = req.params;
-  const { imageId, selectedCaptionId } = req.body;
+app.post('/api/complete-game',isLoggedIn,async(req,res) =>{
   try{
-    const result = await verifyCaption(imageId, selectedCaptionId);
-    const isCorrect = result.isCorrect;
-    const score = isCorrect ? 5 : 0;
-    const roundId = await saveRound(gameId, imageId, selectedCaptionId, score);
-    res.json({ roundId, isCorrect, score });
-  } catch(e){
-    console.error(`ERROR: ${e.message}`);
-    res.status(503).json({error: 'Impossible to create the round.'});
+    const {userId,score,rounds} = req.body
+    const gameId = await completeGame(userId,score);
 
-  }
-});
+    for (const round of rounds) {
+      await saveRound(gameId, round.meme_id, round.selected_caption, round.correct ? 5 : 0);
+    }
 
-app.post('/api/games',isLoggedIn,async(req,res) =>{
-  try{
-    const userId = req.user.id;
-    const gameId = await startGame(userId);
     res.status(201).json({gameId});
   }catch(e){
     console.error(`ERROR: ${e.message}`);
-    res.status(500).json({ error: 'Impossible to start a new game.' });
+    res.status(500).json({ error: 'Impossible to complete game.' });
 
   }
 })
 
-app.put('/api/games/:gameId/end', isLoggedIn, async(req,res) =>{
-  const { gameId } = req.params;
-  const {score} = req.body;
-  try{
-    const result = await endGame(gameId,score);
-    res.json(result);
-  }catch(err){
-    console.error(`ERROR: ${err.message}`);
-    res.status(500).json({ error: 'Impossible to end the game.' });
-  }
-})
 
-app.get('/api/games/:gameId/summary', async (req, res) => {
+app.get('/api/games/:gameId/summary',isLoggedIn, async (req, res) => {
   const gameId = req.params.gameId;
   try {
     const summary = await getGameSummary(gameId);
@@ -193,6 +171,35 @@ app.get('/api/games/:gameId/summary', async (req, res) => {
     res.status(500).json({ error: 'Error fetching game summary' });
   }
 });
+
+app.get('/api/:userId/history', isLoggedIn, async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const gameIds = await getGameHistory(userId);
+
+    const history = {
+      totalScore: 0,
+      games: []
+    };
+
+    for (const gameId of gameIds) {
+      try {
+        const gameSummary = await getGameSummary(gameId);
+        history.totalScore += gameSummary.totalScore;
+        history.games.push(gameSummary);
+      } catch (err) {
+        return res.status(500).json({ error: 'Error fetching game summary' });
+      }
+    }
+
+    res.json(history);
+  } catch (err) {
+    console.error('Error fetching game history:', err);
+    res.status(500).json({ error: 'Error fetching game history' });
+  }
+});
+
 
 
 

@@ -130,10 +130,10 @@ export const saveRound = (gameId, imageId, selectedCaptionId, score) =>{
   })
 }
 
-export const startGame = (userId) => {
+export const completeGame = (userId,score) => {
   return new Promise((resolve, reject) => {
-    const sql = 'INSERT INTO game (user_id, score) VALUES (?,0)';
-    db.run(sql, [userId], function (err) {
+    const sql = 'INSERT INTO game (user_id, score) VALUES (?,?)';
+    db.run(sql, [userId,score], function (err) {
       if (err) {
         reject(err);
       } else {
@@ -194,6 +194,20 @@ export const getGameSummary = (gameId) =>{
           }
         });
       }
+    });
+  });
+};
+
+export const getGameHistory = (userId) => {
+  return new Promise((resolve, reject) => {
+    const sqlGames = 'SELECT id FROM game WHERE user_id = ?';
+    db.all(sqlGames, [userId], (err, gameRows) => {
+      if (err) {
+        return reject(err);
+      }
+
+      const gameIds = gameRows.map(row => row.id);
+      resolve(gameIds);
     });
   });
 };

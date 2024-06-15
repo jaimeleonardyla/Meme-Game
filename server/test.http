@@ -9,6 +9,9 @@ content-type: application/json
 }
 ###
 
+GET http://localhost:3001/api/1/history
+###
+
 ### Checking if user is still logged-in.
 GET http://localhost:3001/api/sessions/current
 ###
@@ -52,11 +55,29 @@ content-type: application/json
 }
 ###
 
-POST http://localhost:3001/api/games
+POST http://localhost:3001/api/complete-game
 content-type: application/json
 
 {
-  "userId": 1
+  "userId": 1,
+  "score": 1,
+  "rounds": [
+    {
+        "meme_id": 1,
+        "selected_caption": null,
+        "correct": true
+    },
+    {
+        "meme_id": 2,
+        "selected_caption": 2,
+        "correct": true
+    },
+    {
+        "meme_id": 3,
+        "selected_caption": 3,
+        "correct": true
+    }
+  ]
 }
 ###
 
@@ -68,7 +89,7 @@ content-type: application/json
 }
 ###
 
-GET http://localhost:3001/api/games/1/summary
+GET http://localhost:3001/api/games/7/summary
 ###
 
 ### Request a new meme with no used images
@@ -79,3 +100,4 @@ content-type: application/json
   "usedImageIds": [2]
 }
 ###
+
