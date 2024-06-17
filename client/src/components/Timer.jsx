@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
+import { ProgressBar, Row, Col } from 'react-bootstrap';
+import '../App.css'
 
 export function Timer(props) {
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
@@ -20,13 +21,11 @@ export function Timer(props) {
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
 
-
   return (
-    <>
-    {timeLeft} seconds
-    
-    </>
-    
+    <Row className="justify-content-center mb-4">
+      <Col md={8}>
+        <ProgressBar now={(timeLeft / 30) * 100} label={`${timeLeft} seconds`} />
+      </Col>
+    </Row>
   );
-};
-
+}

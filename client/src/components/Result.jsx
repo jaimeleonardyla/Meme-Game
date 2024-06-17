@@ -1,66 +1,69 @@
-import React, { useState,useEffect } from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Button, Alert, ListGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import API from '../API.mjs'; 
-
+import API from '../API.mjs';
+import '../App.css'
 
 export function Result(props) {
-    const [correctCaptions, setCorrectCaptions] = useState([]);
+  const [correctCaptions, setCorrectCaptions] = useState([]);
 
-    useEffect(() =>{
-        const getCorrectCaptions = async () => {
-          
-            const captions = await API.getCorrectCaptions(props.imageId);
-            setCorrectCaptions(captions);
-          
-        };
-        
-        getCorrectCaptions();
-      },[]);
+  useEffect(() => {
+    const getCorrectCaptions = async () => {
+      try {
+        const captions = await API.getCorrectCaptions(props.imageId);
+        setCorrectCaptions(captions);
+      } catch (error) {
+        console.error('Error fetching correct captions:', error);
+      }
+    };
 
-    return (
-        <>
-        <Row>
-            <Col className="text-center">
-            {props.timeEnd ? (
-                <>
-                <p className="text-danger">Time's up!! The correct answers were:</p>
-                <ul>
+    getCorrectCaptions();
+  }, [props.imageId]);
+
+  return (
+    <>
+      <Row className="justify-content-center mt-3">
+        <Col md={8} className="text-center">
+          {props.timeEnd ? (
+            <Alert variant="danger">
+              <Alert.Heading>Time's up!</Alert.Heading>
+              <p>The correct answers were:</p>
+              <ListGroup variant="flush">
                 {correctCaptions.map(caption => (
-                  <li key={caption.id}>{caption.text}</li>
+                  <ListGroup.Item key={caption.id}>{caption.text}</ListGroup.Item>
                 ))}
-              </ul>
-              </>
-
-                
+              </ListGroup>
+            </Alert>
+          ) : (
+            props.isCorrect ? (
+              <Alert variant="success">
+                <Alert.Heading>Correct!</Alert.Heading>
+              </Alert>
             ) : (
-                props.isCorrect ? (
-                <p className="text-success">Correct!</p>
-                ) : (
-                <>
-                <p className="text-danger">Incorrect! The correct answers were:</p>
-                <ul>
-                {correctCaptions.map(caption => (
-                  <li key={caption.id}>{caption.text}</li>
-                ))}
-              </ul>
-              </>
-                )
-            )}
-            </Col>
-        </Row>
-        <Row>
-            <Col className="text-center">
-              {props.loggedIn?(
-                null
-              ):
-              <Link to="/">
-                <Button>End of Game</Button>
+              <Alert variant="danger">
+                <Alert.Heading>Incorrect!</Alert.Heading>
+                <p>The correct answers were:</p>
+                <ListGroup variant="flush">
+                  {correctCaptions.map(caption => (
+                    <ListGroup.Item key={caption.id}>{caption.text}</ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Alert>
+            )
+          )}
+        </Col>
+      </Row>
+      <Row className="justify-content-center mt-3">
+        <Col md={8} className="text-center">
+          {!props.loggedIn && (
+            <Link to="/">
+              <Row className='justify-content-center'>
+              <Button variant="primary">End of Game</Button>
+              </Row>
             </Link>
-            }
-            
-            </Col>
-        </Row>
-        </>
-    );
+          )}
+        </Col>
+      </Row>
+    </>
+  );
 }

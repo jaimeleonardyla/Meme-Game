@@ -1,44 +1,60 @@
 import { useState } from "react";
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import '../App.css'
 
-function LoginForm(props){
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+function LoginForm(props) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const credentials = { username, password };
+    props.login(credentials);
+  };
 
-    const handleSubmit = (event) =>{
-        event.preventDefault();
-        const credentials = {username,password};
-        props.login(credentials);
-    }
-    return (
-    <Row>
+  return (
+    <Row className="justify-content-center mt-5">
       <Col md={6}>
+        <h2 className="text-center mb-4">Login</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId='username' className='mb-3'>
-              <Form.Label>email</Form.Label>
-              <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} required={true} />
+            <Form.Label>Email</Form.Label>
+            <Form.Control 
+              type='email' 
+              placeholder="Enter email" 
+              value={username} 
+              onChange={ev => setUsername(ev.target.value)} 
+              required 
+            />
           </Form.Group>
 
           <Form.Group controlId='password' className='mb-3'>
-              <Form.Label>Password</Form.Label>
-              <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} required={true} minLength={6}/>
+            <Form.Label>Password</Form.Label>
+            <Form.Control 
+              type='password' 
+              placeholder="Enter password" 
+              value={password} 
+              onChange={ev => setPassword(ev.target.value)} 
+              required 
+              minLength={6} 
+            />
           </Form.Group>
 
-          <Button type='submit'>Login</Button>
-          <Link className='btn btn-danger mx-2 my-2' to={'/'} >Cancel</Link>
-      </Form>
-    </Col>
-  </Row>
-  
-    )
+          <div className="d-grid gap-2">
+            <Button variant="primary" type='submit'>Login</Button>
+            <Button as={Link} to="/" variant="secondary">Cancel</Button>
+          </div>
+        </Form>
+      </Col>
+    </Row>
+  );
 }
 
 function LogoutButton(props) {
-    return(
-      <Button variant='outline-light' onClick={props.logout}>Logout</Button>
-    )
-  }
-   
-export {LoginForm, LogoutButton};
+  return (
+    <Button variant='outline-light' onClick={props.logout}>Logout</Button>
+  );
+}
+
+export { LoginForm, LogoutButton };

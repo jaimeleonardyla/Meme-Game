@@ -1,42 +1,33 @@
-import { useState, useEffect } from 'react'
-
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { LoginForm } from './components/LoginComponent'
-
-import { Container, Row, Alert } from 'react-bootstrap';
-
-import {Routes, Route, Outlet, Navigate} from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Routes, Route, Outlet, Navigate, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Alert, Button } from 'react-bootstrap';
 import NavHeader from "./components/NavHeader";
-import {HomePage} from './components/HomePage';
-import {Meme} from './components/Meme';
-import {Game} from './components/Game';
-import {useNavigate} from 'react-router-dom';
-import {GameSummary} from './components/GameSummary';
-
-
+import { HomePage } from './components/HomePage';
+import { Meme } from './components/Meme';
+import { Game } from './components/Game';
+import { GameSummary } from './components/GameSummary';
+import { GameHistory } from './components/GameHistory';
+import { LoginForm } from './components/LoginComponent';
 import API from './API.mjs';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './App.css'; // If you have any additional custom CSS
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false); // NEW
-  const [message, setMessage] = useState(''); // NEW
-  const [user, setUser] = useState(''); // NEW
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [message, setMessage] = useState('');
+  const [user, setUser] = useState('');
   const navigate = useNavigate();
-
-
-  
-
-
-  
 
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await API.getUserInfo(); // we have the user info here
-      setLoggedIn(true);
-      setUser(user);
+      
+      try {
+        const user = await API.getUserInfo();
+        setLoggedIn(true);
+        setUser(user);
+      } catch (err) {
+        
+      }
     };
     checkAuth();
   }, []);
@@ -45,61 +36,49 @@ function App() {
     try {
       const user = await API.logIn(credentials);
       setLoggedIn(true);
-      setMessage({msg: `Welcome, ${user.name}!`, type: 'success'});
+      setMessage({ msg: `Welcome, ${user.name}!`, type: 'success' });
       setUser(user);
-    }catch(err) {
-      setMessage({msg: err, type: 'danger'});
+    } catch (err) {
+      setMessage({ msg: err, type: 'danger' });
     }
   };
 
   const handleLogout = async () => {
     await API.logOut();
     setLoggedIn(false);
-    // clean up everything
     setMessage('');
     navigate('/');
-
   };
 
   return (
     <Routes>
-      <Route element={<>
-        {/* UPDATED */}
-        <NavHeader loggedIn={loggedIn} handleLogout={handleLogout} />
-        <Container fluid className='mt-3'>
-          {/* NEW */}
-          {message && <Row>
-            <Alert variant={message.type} onClose={() => setMessage('')} dismissible>{message.msg}</Alert>
-          </Row> }
-          <Outlet/>
-        </Container>
+      <Route element={
+        <>
+          <NavHeader loggedIn={loggedIn} handleLogout={handleLogout} />
+          <Container fluid className="mt-3">
+            {message && 
+              <Row>
+                <Col>
+                  <Alert variant={message.type} onClose={() => setMessage('')} dismissible>
+                    {message.msg}
+                  </Alert>
+                </Col>
+              </Row>
+            }
+            <Outlet />
+          </Container>
         </>
       }>
-
-
-        <Route index element={
-          <HomePage loggedIn={loggedIn}/>
-        }/>
-
-        <Route 
-            path="/meme" 
-            element={<Meme loggedIn = {loggedIn}/>} 
-        />
-
-        <Route path='/game/:gameId' element={<Game/>} />
-        <Route path ='/game-summary/:gameId' element = {<GameSummary/>} />
-
-        <Route path='/login' element={
-          loggedIn ? <Navigate replace to='/' /> : <LoginForm login={handleLogin} />
-        } />
-
-        <Route path="*" element={
-          <h1>404</h1>
-        }/>
+        <Route index element={<HomePage loggedIn={loggedIn} />} />
+        <Route path="/meme" element={<Meme loggedIn={loggedIn} />} />
+        <Route path="/game/start" element={<Game user={user} />} />
+        <Route path="/game-summary/:gameId" element={<GameSummary />} />
+        <Route path="/profile" element={<GameHistory user={user} />} />
+        <Route path="/login" element={loggedIn ? <Navigate replace to='/' /> : <LoginForm login={handleLogin} />} />
+        <Route path="*" element={<h1 className="text-center mt-5">404 - Page Not Found</h1>} />
       </Route>
     </Routes>
-              
-  )
+  );
 }
 
-export default App
+export default App;

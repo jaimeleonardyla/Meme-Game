@@ -93,9 +93,13 @@ const getCorrectCaptions = async(imageId) =>{
   }
 };
 
-const startGame = async() =>{
-  const response = await fetch(SERVER_URL + '/api/games',{
+const completeGame = async(userId,score,rounds) =>{
+  const response = await fetch(SERVER_URL + '/api/complete-game', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, score, rounds }),
     credentials: 'include'
   });
   if (!response.ok) {
@@ -107,39 +111,23 @@ const startGame = async() =>{
   }
 }
 
-const saveRound = async(gameId, imageId, selectedCaptionId) =>{
-  const response = await fetch(SERVER_URL + `/api/games/${gameId}/rounds`,{
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ imageId: imageId, selectedCaptionId: selectedCaptionId}),
-    credentials: 'include'
-  });
-  if(!response.ok){
-    const errMessage = await response.text();
-    throw new Error(errMessage);
-  }else{
-    return null
-  }
-}
-
-const endGame = async(gameId, score) =>{
-  const response = await fetch(SERVER_URL + `/api/games/${gameId}/end`,{
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ score: score}),
-    credentials: 'include'
-  });
-  if(!response.ok){
-    const errMessage = await response.text();
-    throw new Error(errMessage);
-  }else{
-    const result = await response.json(); // Parse the JSON response
-    return result;
-  }
-}
-
 const getGameSummary = async(gameId) =>{
-  const response = await fetch(SERVER_URL + `/api/games/${gameId}/summary`);
+  const response = await fetch(SERVER_URL + `/api/games/${gameId}/summary`,{
+    credentials: 'include'
+  });
+  if(!response.ok){
+    const errMessage = await response.text();
+    throw new Error(errMessage);
+  }else{
+    const result = await response.json(); // Parse the JSON response
+    return result;
+  }
+}
+
+const getGameHistory = async(userId) =>{
+  const response = await fetch(SERVER_URL +`/api/${userId}/history`, {
+    credentials: 'include'
+  })
   if(!response.ok){
     const errMessage = await response.text();
     throw new Error(errMessage);
@@ -150,7 +138,7 @@ const getGameSummary = async(gameId) =>{
 }
 
 
-const API = {logIn, logOut, getUserInfo, getMeme, verifyCaption, getCorrectCaptions, startGame, saveRound, endGame, getGameSummary};
+const API = {logIn, logOut, getUserInfo, getMeme, verifyCaption, getCorrectCaptions, completeGame,  getGameSummary, getGameHistory};
 export default API;
   
   
