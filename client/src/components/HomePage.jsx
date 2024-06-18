@@ -19,7 +19,7 @@ function HomePage(props) {
               Start Game
             </Button>
           ) : (
-            <Button as={Link} to="/meme" variant="outline-primary" className="mt-3">
+            <Button as={Link} to="/meme" variant="primary" className="mt-3">
               Start Game
             </Button>
           )}

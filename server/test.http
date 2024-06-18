@@ -23,7 +23,12 @@ DELETE http://localhost:3001/api/sessions/current
 GET http://localhost:3001/api/image
 ###
 
-GET http://localhost:3001/api/meme
+POST http://localhost:3001/api/meme
+Content-Type: application/json
+
+{
+  "usedImageIds": [1]
+}
 ###
 
 POST http://localhost:3001/api/meme/verify
@@ -91,6 +96,10 @@ content-type: application/json
 
 GET http://localhost:3001/api/games/7/summary
 ###
+
+GET http://localhost:3001/api/1/history
+###
+
 
 ### Request a new meme with no used images
 POST http://localhost:3001/api/meme
