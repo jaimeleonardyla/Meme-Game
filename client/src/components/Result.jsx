@@ -22,7 +22,7 @@ export function Result(props) {
 
   return (
     <>
-      <Row className="justify-content-center mt-3">
+      <Row className="justify-content-center ">
         <Col md={8} className="text-center">
           {props.timeEnd ? (
             <Alert variant="danger">
@@ -53,7 +53,7 @@ export function Result(props) {
           )}
         </Col>
       </Row>
-      <Row className="justify-content-center mt-3">
+      <Row className="justify-content-center">
         <Col md={8} className="text-center">
           {!props.loggedIn && (
             <Link to="/">
