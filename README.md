@@ -164,7 +164,7 @@
 
 ![Screenshot1](./img/screenshot1.PNG)
 
-![Screenshot2](./img/screenshot.PNG)
+![Screenshot2](./img/screenshot2.PNG)
 
 
 ## Users Credentials
