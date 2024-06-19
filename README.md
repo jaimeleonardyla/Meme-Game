@@ -162,12 +162,12 @@
 
 ## Screenshots
 
-![Screenshot1](./img/screenshot.jpg)
+![Screenshot1](./img/screenshot1.PNG)
 
-![Screenshot2](./img/screenshot.jpg)
+![Screenshot2](./img/screenshot.PNG)
 
 
 ## Users Credentials
 
-- username, password (plus any other requested info)
-- username, password (plus any other requested info)
+- username: jaime.leon@polito.it, password: testtest
+- username: luigi.derussis@polito.it, password: testtest
