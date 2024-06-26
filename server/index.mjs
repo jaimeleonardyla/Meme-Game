@@ -11,9 +11,23 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+
 // init express
 const app = new express();
 const port = 3001;
+
+// Resolve __dirname since it's not available in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from the public/images directory
+
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 
 app.use(express.json());
 app.use(morgan('dev'))

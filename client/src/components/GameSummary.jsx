@@ -60,7 +60,8 @@ function GameSummary(props) {
               <Card.Body>
                 <Row>
                   <Col md={4}>
-                    <img src={round.imageUrl} alt={`Round ${index + 1}`} className="img-fluid rounded" />
+                  
+                    <img src={`http://localhost:3001${round.imageUrl}`} alt={`Round ${index + 1}`} className="img-fluid rounded" />
                   </Col>
                   <Col md={8}>
                     <p><strong>Selected Caption:</strong> {round.selectedCaption}</p>

@@ -50,7 +50,7 @@ function GameHistory(props) {
                 <ListGroup.Item key={roundIndex}>
                   <Row>
                     <Col md={4}>
-                      <img src={round.imageUrl} alt={`Round ${roundIndex + 1}`} className="img-fluid rounded" />
+                      <img src={`http://localhost:3001${round.imageUrl}`} alt={`Round ${roundIndex + 1}`} className="img-fluid rounded" />
                     </Col>
                     <Col md={8}>
                       <p><strong>Caption:</strong> {round.selectedCaption}</p>

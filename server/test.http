@@ -12,6 +12,9 @@ content-type: application/json
 GET http://localhost:3001/api/1/history
 ###
 
+GET http://localhost:3001/images/img1.jpg
+###
+
 ### Checking if user is still logged-in.
 GET http://localhost:3001/api/sessions/current
 ###

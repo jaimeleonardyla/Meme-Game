@@ -87,7 +87,7 @@ export function Meme(props) {
           <Timer onTimeEnd={handleTimeEnd} />
           <Row className="justify-content-center mb-3">
             <Col md={8} className="text-center">
-              <img src={meme.image.image_url} alt="Meme" className="img-fluid rounded" />
+              <img src={`http://localhost:3001${meme.image.image_url}`} alt="Meme" className="img-fluid rounded" />
             </Col>
           </Row>
           <Caption captions={meme.captions} onCaptionClick={handleCaptionClick} />
