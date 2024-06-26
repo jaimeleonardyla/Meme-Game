@@ -52,10 +52,16 @@ function GameSummary(props) {
 
       <h2 className="text-center">Rounds:</h2>
 
-        {summary.rounds.map((round, index) => (
-          round.score>0?
 
-            <Col md={8} key={index} className="mb-4">
+
+
+      
+
+        {summary.rounds.map((round, index) => (
+          round.score>0?(
+
+          <Col md={8} key={index} className="mb-4">
+
             <Card>
               <Card.Body>
                 <Row>
@@ -71,13 +77,14 @@ function GameSummary(props) {
               </Card.Body>
             </Card>
             
-          </Col>:
-          <></>
+          </Col>):
+          (<Col md={8} key={index} className="mb-4"></Col>)
+          ))}
 
           
+
           
-          
-        ))}
+        
         
       </Row>
     </Container>
